@@ -1,4 +1,10 @@
 # rust-envoy-proxy
+
+[![Build Status][build-badge]][build-link]
+[![Crate][crate-badge]][crate-link]
+[![Documentation][docs-badge]][docs-link]
+[![Apache 2.0 License][license-badge]][license-link]
+
 Extension for istio envoy to allow trace personal data between rest microservices in kubernetes
 
 ##Rust programming language documentation
