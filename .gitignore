@@ -1,0 +1,4 @@
+/my-wasm-filter/docker.out/myenvoyfilter.wasm
+.idea
+target
+primeenvoyfilter.wasm
