@@ -7,6 +7,14 @@
 
 Extension for istio envoy to allow trace personal data between rest microservices in kubernetes
 
+## Projects
+
+### [prime-wasm-filter](./prime-wasm-filter)
+
+Sample project to use a prime factor filter to authorize the flow.
+It uses rust to generate a wasm32 using docker, and then install the extension in
+envoy proxy. Test evverything using docker compose
+
 ## Rust programming language documentation
 
 - [Rust - The Book](https://doc.rust-lang.org/book/)
