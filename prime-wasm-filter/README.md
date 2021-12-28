@@ -21,16 +21,31 @@ docker build . -t prime-wasm-filter
 docker run -v $PWD/release/wasm32-unknown-unknown/:/opt/mount --rm --entrypoint cp prime-wasm-filter /target/wasm32-unknown-unknown/release/primeenvoyfilter.wasm /opt/mount/primeenvoyfilter.wasm 
 ```
 
+- Generate checksum for installer
+
+```shell
+sha256sum release/wasm32-unknown-unknown/primeenvoyfilter.wasm
+```
+
+- Replace generated checksum in istio prime.filter.yaml
+
 - Run docker compose with istio envoy with the wasm extension using
 
 ```shell
-docker-compose -f ./release/docker-compose.yaml up --build
+docker-compose -f ./release/docker-compose.yaml up --build -d
 ```
 
 In order to test execute the following instruction
 
-- OK `curl  -H "token":"32323" 0.0.0.0:18000`
-- FAIL `curl  -H "token":"323232" 0.0.0.0:18000`
+- OK `curl  -H "x-prime-token":"32323" 0.0.0.0:18000`
+- FAIL `curl  -H "x-prime-token":"323232" 0.0.0.0:18000`
+
+Shutdown docker compose
+
+```shell
+docker-compose -f ./release/docker-compose.yaml stop
+docker-compose -f ./release/docker-compose.yaml rm
+```
 
 ## Useful commands
 
