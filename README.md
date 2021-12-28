@@ -25,6 +25,7 @@ Blogs
 
 - [Extending envoy with wasm and rust](https://antweiss.com/blog/extending-envoy-with-wasm-and-rust/)
 - [Istio wasm plugin configuration](https://istio.io/latest/docs/reference/config/proxy_extensions/wasm-plugin/)
+- [Istio: Distributing WebAssembly Modules](https://istio.io/latest/docs/ops/configuration/extensibility/wasm-module-distribution/)
 
 ## Videos
 
