@@ -24,6 +24,7 @@ envoy proxy. Test evverything using docker compose
 Blogs
 
 - [Extending envoy with wasm and rust](https://antweiss.com/blog/extending-envoy-with-wasm-and-rust/)
+- [Istio wasm plugin configuration](https://istio.io/latest/docs/reference/config/proxy_extensions/wasm-plugin/)
 
 ## Videos
 
