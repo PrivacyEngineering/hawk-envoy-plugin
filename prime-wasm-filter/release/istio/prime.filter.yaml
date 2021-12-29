@@ -1,8 +1,8 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
-  name: prime-auth-filter
-  namespace: istio-system
+  name: prime-filter
+  namespace: sock-shop
 spec:
   configPatches:
     - applyTo: HTTP_FILTER
@@ -11,11 +11,11 @@ spec:
         listener:
           filterChain:
             filter:
-              name: envoy.http_connection_manager
+              name: envoy.filters.network.http_connection_manager
       patch:
         operation: INSERT_BEFORE
         value:
-          name: istio.prime-auth-filter
+          name: prime-filter-config
           config_discovery:
             config_source:
               ads: {}

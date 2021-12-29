@@ -1,8 +1,8 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
-  name: prime-auth-filter-config
-  namespace: istio-system
+  name: prime-filter-config
+  namespace: sock-shop
 spec:
   configPatches:
     - applyTo: EXTENSION_CONFIG
@@ -11,7 +11,7 @@ spec:
       patch:
         operation: ADD
         value:
-          name: istio.prime-auth-filter
+          name: prime-filter-config
           typed_config:
             "@type": type.googleapis.com/udpa.type.v1.TypedStruct
             type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
@@ -24,11 +24,11 @@ spec:
                     remote:
                       http_uri:
                         uri: https://raw.githubusercontent.com/TUB-CNPE-TB/rust-envoy-proxy/main/prime-wasm-filter/release/wasm32-unknown-unknown/primeenvoyfilter.wasm
-                      # Optional: specifying sha256 checksum will let istio agent verify the checksum of downloaded artifacts.
-                      # It is **highly** recommended to provide the checksum, since missing checksum will cause the Wasm module to be downloaded repeatedly.
-                      # To compute the sha256 checksum of a Wasm module, download the module and run `sha256sum` command with it.
-                      # sha256: <WASM-MODULE-SHA>
-                       sha256: a2fb7cc9e01a73745e0bd3dba16525a2cac1411116766c8843454c1ba2deef05
+                        # Optional: specifying sha256 checksum will let istio agent verify the checksum of downloaded artifacts.
+                        # It is **highly** recommended to provide the checksum, since missing checksum will cause the Wasm module to be downloaded repeatedly.
+                        # To compute the sha256 checksum of a Wasm module, download the module and run `sha256sum` command with it.
+                        # sha256: <WASM-MODULE-SHA>
+                        sha256: d35ae841ddeb8155b8bfd93b6a09b30801057747341d7cf09245b942a3c5c3cf
                 # The configuration for the Wasm extension itself
 #                configuration:
 #                  '@type': type.googleapis.com/google.protobuf.StringValue

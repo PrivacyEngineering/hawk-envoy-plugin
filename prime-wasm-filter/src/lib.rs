@@ -1,4 +1,4 @@
-use log::trace;
+use log::{info, trace};
 use primes::is_prime;
 use proxy_wasm::traits::{Context, HttpContext};
 use proxy_wasm::types::{Action, LogLevel};
@@ -19,16 +19,16 @@ impl Context for PrimeAuthorizer {}
 
 impl HttpContext for PrimeAuthorizer {
     fn on_http_request_headers(&mut self, _: usize) -> Action {
-        for (name, value) in &self.get_http_request_headers() {
-            trace!("In WASM : #{} -> {}: {}", self.context_id, name, value);
-        }
+        info!("PrimeAuthorizer started. #{}", self.context_id);
 
         match self.get_http_request_header("x-prime-token") {
             Some(token) if token.parse::<u64>().is_ok() && is_prime(token.parse().unwrap()) => {
+                info!("PrimeAuthorizer. OK. #{} -> Header x-prime-token: {}", self.context_id, token);
                 self.resume_http_request();
                 Action::Continue
             }
             _ => {
+                info!("PrimeAuthorizer. #{} -> Access forbidden", self.context_id);
                 self.send_http_response(
                     403,
                     vec![("Powered-By", "proxy-wasm")],
