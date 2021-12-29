@@ -1,8 +1,9 @@
+# istio api config: https://github.com/istio/api/blob/master/networking/v1alpha3/envoy_filter.gen.json
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: prime-filter-config
-  namespace: sock-shop
+  namespace: istio-system
 spec:
   configPatches:
     - applyTo: EXTENSION_CONFIG
@@ -22,13 +23,16 @@ spec:
                   runtime: envoy.wasm.runtime.v8
                   code:
                     remote:
+                      # envoy api for http_uri: https://github.com/envoyproxy/envoy/blob/main/api/envoy/api/v2/core/http_uri.proto
                       http_uri:
-                        uri: https://raw.githubusercontent.com/TUB-CNPE-TB/rust-envoy-proxy/main/prime-wasm-filter/release/wasm32-unknown-unknown/primeenvoyfilter.wasm
+                        uri: https://github.com/jmgoyesc/istio-extensions/blob/main/primeenvoyfilter.wasm?raw=true
+                        sha256: d35ae841ddeb8155b8bfd93b6a09b30801057747341d7cf09245b942a3c5c3cf
+                        timeout: 10s
+                        http_upstream_type: http
                         # Optional: specifying sha256 checksum will let istio agent verify the checksum of downloaded artifacts.
                         # It is **highly** recommended to provide the checksum, since missing checksum will cause the Wasm module to be downloaded repeatedly.
                         # To compute the sha256 checksum of a Wasm module, download the module and run `sha256sum` command with it.
                         # sha256: <WASM-MODULE-SHA>
-                        sha256: d35ae841ddeb8155b8bfd93b6a09b30801057747341d7cf09245b942a3c5c3cf
                 # The configuration for the Wasm extension itself
 #                configuration:
 #                  '@type': type.googleapis.com/google.protobuf.StringValue
