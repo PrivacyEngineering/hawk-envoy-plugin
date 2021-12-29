@@ -47,6 +47,16 @@ docker-compose -f ./release/docker-compose.yaml stop
 docker-compose -f ./release/docker-compose.yaml rm
 ```
 
+## Istio example
+
+It is required to use istio gateway for the traffic because the http filter is applied for
+gateway. It is possible to apply it for inbound or outbound proxy traffic (envoy) but it should go 
+through the gateway for the filter to work.
+
+1. Run the google cloud setup with istio enable
+2. Configure gateway
+3. Run release/istio/ files to install the filter. Istio will install the filter in each envoy proxy
+
 ## Useful commands
 
 - Connect to docker to browser content using sh
