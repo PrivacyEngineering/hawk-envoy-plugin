@@ -18,6 +18,7 @@ spec:
             type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
             value:
               config:
+                # envoy api: https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/base.proto#envoy-v3-api-msg-config-core-v3-remotedatasource
                 vm_config:
                   vm_id: prime-auth-filter
                   runtime: envoy.wasm.runtime.v8
@@ -26,23 +27,7 @@ spec:
                       # envoy api for http_uri: https://github.com/envoyproxy/envoy/blob/main/api/envoy/api/v2/core/http_uri.proto
                       http_uri:
                         uri: https://github.com/jmgoyesc/istio-extensions/blob/main/primeenvoyfilter.wasm?raw=true
-                        sha256: d35ae841ddeb8155b8bfd93b6a09b30801057747341d7cf09245b942a3c5c3cf
                         timeout: 10s
-                        http_upstream_type: http
-                        # Optional: specifying sha256 checksum will let istio agent verify the checksum of downloaded artifacts.
-                        # It is **highly** recommended to provide the checksum, since missing checksum will cause the Wasm module to be downloaded repeatedly.
-                        # To compute the sha256 checksum of a Wasm module, download the module and run `sha256sum` command with it.
-                        # sha256: <WASM-MODULE-SHA>
-                # The configuration for the Wasm extension itself
-#                configuration:
-#                  '@type': type.googleapis.com/google.protobuf.StringValue
-#                  value: |
-#                    {
-#                      "basic_auth_rules": [
-#                        {
-#                          "prefix": "/productpage",
-#                          "request_methods":[ "GET", "POST" ],
-#                          "credentials":[ "ok:test", "YWRtaW4zOmFkbWluMw==" ]
-#                        }
-#                      ]
-#                    }
+                        cluster: jwks_cluster
+                      # command `sha256sum`
+                      sha256: d35ae841ddeb8155b8bfd93b6a09b30801057747341d7cf09245b942a3c5c3cf
