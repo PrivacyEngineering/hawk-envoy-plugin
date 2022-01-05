@@ -53,9 +53,36 @@ It is required to use istio gateway for the traffic because the http filter is a
 gateway. It is possible to apply it for inbound or outbound proxy traffic (envoy) but it should go 
 through the gateway for the filter to work.
 
-1. Run the google cloud setup with istio enable
-2. Configure gateway
-3. Run release/istio/ files to install the filter. Istio will install the filter in each envoy proxy
+1. Run the Google cloud setup with istio enable
+2. Install httpbin
+
+```shell
+kaf https://raw.githubusercontent.com/istio/istio/release-1.12/samples/httpbin/httpbin.yaml
+```
+
+3. Configure gateway
+4. Run release/istio/ files to install the filter. Istio will install the filter in each envoy proxy
+5. Export variables to access istio ingress
+
+```shell
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+export TCP_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="tcp")].port}')
+```
+
+6. Execute the test
+
+HTTP/1.1 403 Forbidden
+```shell
+curl -H "x-prime-token":"3232" -v -s -I "http://$INGRESS_HOST:$INGRESS_PORT/headers"
+```
+
+HTTP/1.1 200 OK
+```shell
+curl -H "x-prime-token":"32323" -v -s -I "http://$INGRESS_HOST:$INGRESS_PORT/headers"
+```
+
 
 ## Useful commands
 
