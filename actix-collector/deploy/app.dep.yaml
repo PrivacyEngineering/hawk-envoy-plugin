@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: actix-collector
-        image: actix-collector
+        image: jmgoyesc/actix-collector
         resources:
           requests:
             memory: "32Mi"
