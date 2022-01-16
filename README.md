@@ -15,6 +15,10 @@ Sample project to use a prime factor filter to authorize the flow.
 It uses rust to generate a wasm32 using docker, and then install the extension in
 envoy proxy. Test evverything using docker compose
 
+### [actix-wasm-filter](./actix-wasm-filter)
+
+Istio/envoy extension using WASM to intercept request and response traffic for services using istio ingress
+
 ## Rust programming language documentation
 
 - [Rust - The Book](https://doc.rust-lang.org/book/)

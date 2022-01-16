@@ -1,3 +1,4 @@
 /my-wasm-filter/docker.out/myenvoyfilter.wasm
 .idea
 target
+.DS_Store
