@@ -54,24 +54,45 @@ gateway. It is possible to apply it for inbound or outbound proxy traffic (envoy
 through the gateway for the filter to work.
 
 1. Run the Google cloud setup with istio enable
-2. Install httpbin
+2. Create namespace for httpbin demo project
 
 ```shell
-kaf https://raw.githubusercontent.com/istio/istio/release-1.12/samples/httpbin/httpbin.yaml
+kaf release/istio/httbin.gateway.ns.yaml
 ```
 
-3. Configure gateway
-4. Run release/istio/ files to install the filter. Istio will install the filter in each envoy proxy
-5. Export variables to access istio ingress
+3. Install httpbin
+
+```shell
+kaf https://raw.githubusercontent.com/istio/istio/release-1.12/samples/httpbin/httpbin.yaml -n httpbin-gateway
+```
+
+4. Configure istio gateway for httpbin project
+
+```shell
+kaf release/istio/istio.gateway.httpbin.yaml
+```
+
+5. Run release/istio/ files to install the filter. Istio will install the filter in each envoy proxy
+6. Export variables to access istio ingress
 
 ```shell
 export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
-export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
-export TCP_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="tcp")].port}')
 ```
 
-6. Execute the test
+7. Test the isitio ingress gateway before install the filter. It should get 200 OK
+
+```shell
+curl -v -s -I "http://$INGRESS_HOST:$INGRESS_PORT/headers"
+```
+
+8. Install prime filter
+
+```shell
+kaf release/istio/filter
+```
+
+9. Execute the test
 
 HTTP/1.1 403 Forbidden
 ```shell
@@ -83,6 +104,11 @@ HTTP/1.1 200 OK
 curl -H "x-prime-token":"32323" -v -s -I "http://$INGRESS_HOST:$INGRESS_PORT/headers"
 ```
 
+10. Delete prime filter
+
+```shell
+k delete -f release/istio/filter
+```
 
 ## Useful commands
 
