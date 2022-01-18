@@ -13,4 +13,4 @@ crate-type = ["cdylib"]
 proxy-wasm = "0.1.0"
 primes = "0.3.0"
 log = "0.4"
-
+futures = "0.3"

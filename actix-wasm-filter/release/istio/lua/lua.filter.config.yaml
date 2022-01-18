@@ -1,0 +1,27 @@
+# istio api config: https://github.com/istio/api/blob/master/networking/v1alpha3/envoy_filter.gen.json
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: lua-filter-config
+  namespace: istio-system
+spec:
+  configPatches:
+    - applyTo: EXTENSION_CONFIG
+      match:
+        context: GATEWAY
+      patch:
+        operation: ADD
+        value:
+          name: lua-filter-config
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+            inline_code: |
+              -- Called on the request path.
+              function envoy_on_request(request_handle)
+                request_handle:logInfo("Hello World.")
+              end
+              -- Called on the response path.
+              function envoy_on_response(response_handle)
+                response_handle:logInfo("Bye Bye.")
+                response_handle:headers():add("x-lua-filter", "OK")
+              end

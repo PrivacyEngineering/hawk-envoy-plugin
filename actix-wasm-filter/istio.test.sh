@@ -14,8 +14,4 @@ curl -v -s -I "http://$INGRESS_HOST:$INGRESS_PORT/headers"
 kaf release/istio/filter
 
 # test http gateway with the filter
-# HTTP/1.1 403 Forbidden
-curl -H "x-prime-token":"3232" -v -s -I "http://$INGRESS_HOST:$INGRESS_PORT/headers"
-
-# HTTP/1.1 200 OK
-curl -H "x-prime-token":"32323" -v -s -I "http://$INGRESS_HOST:$INGRESS_PORT/headers"
+curl  -v -s -I "http://$INGRESS_HOST:$INGRESS_PORT/headers"

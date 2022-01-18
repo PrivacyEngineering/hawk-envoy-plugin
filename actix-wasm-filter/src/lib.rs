@@ -3,9 +3,15 @@ use primes::is_prime;
 use proxy_wasm::traits::{Context, HttpContext};
 use proxy_wasm::types::{Action, Bytes, LogLevel};
 
+static PENDING: Vec<string> = Vec::new();
+
+/// Start function which is called when the module is loaded and initialized.
+/// This can be used by SDKs to setup and/or initialize state,
+/// but no proxy_ functions can be used at that point yet.
 #[no_mangle]
 pub fn _start() {
-    proxy_wasm::set_log_level(LogLevel::Trace);
+
+    proxy_wasm::set_log_level(LogLevel::Info);
     proxy_wasm::set_http_context(|context_id, root_context_id| -> Box<dyn HttpContext> {
         Box::new(ActixFilter { context_id, root_context_id })
     });
@@ -34,10 +40,11 @@ impl HttpContext for ActixFilter {
     fn on_http_request_headers(&mut self, _num_headers: usize) -> Action {
         info!("ActixFilter started. #{}", self.context_id);
 
-        // let headers = self.get_http_request_headers(&self);
+
+        let headers = self.get_http_request_headers(&self);
         // info!("ActixFilter headers. #{}", headers);
 
-        return Action::Continue
+        Action::Continue
     }
 
     /// Called for each chunk of HTTP request body received from the client.
@@ -52,7 +59,9 @@ impl HttpContext for ActixFilter {
     /// * i32 (proxy_action_t) next_action
     fn on_http_request_body(&mut self, _body_size: usize, _end_of_stream: bool) -> Action {
         // self.get_http_request_body(start, max);
-        todo!()
+        // todo!()
+
+        Action::Continue
     }
 
     /// Called when HTTP response headers are received from the upstream.
@@ -67,7 +76,9 @@ impl HttpContext for ActixFilter {
     /// * i32 (proxy_action_t) next_action
     fn on_http_response_headers(&mut self, _num_headers: usize) -> Action {
         // let headers = self.get_http_response_headers(&self);
-        todo!()
+        // todo!()
+
+        Action::Continue
     }
 
     /// Called for each chunk of HTTP response body received from the client.
@@ -81,7 +92,9 @@ impl HttpContext for ActixFilter {
     /// # Return
     /// * i32 (proxy_action_t) next_action
     fn on_http_response_body(&mut self, _body_size: usize, _end_of_stream: bool) -> Action {
-        todo!()
+        // todo!()
+
+        Action::Continue
     }
 
 }

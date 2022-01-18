@@ -20,7 +20,7 @@ spec:
               config:
                 # envoy api: https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/base.proto#envoy-v3-api-msg-config-core-v3-remotedatasource
                 vm_config:
-                  vm_id: actix-auth-filter
+                  vm_id: actix-filter
                   runtime: envoy.wasm.runtime.v8
                   code:
                     remote:

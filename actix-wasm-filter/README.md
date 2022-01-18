@@ -11,6 +11,7 @@ Based on:
 - [Envoy Proxy: Life of a request](https://www.envoyproxy.io/docs/envoy/latest/intro/life_of_a_request#request-flow)
 - [Envoy Proxy: Tracing Request ID generation](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/observability/tracing#arch-overview-tracing)
 - [Envoy Proxy: x-request-id header](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers#config-http-conn-man-headers-x-request-id)
+- [Envoy Proxy: Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#config-http-filters-lua-stream-handle-api)
 
 ## Getting started
 
