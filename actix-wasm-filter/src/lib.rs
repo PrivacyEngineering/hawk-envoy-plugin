@@ -1,16 +1,13 @@
-use log::{info, trace};
-use primes::is_prime;
+use proxy_wasm::hostcalls::log;
 use proxy_wasm::traits::{Context, HttpContext};
-use proxy_wasm::types::{Action, Bytes, LogLevel};
-
-static PENDING: Vec<string> = Vec::new();
+use proxy_wasm::types::{Action, LogLevel};
 
 /// Start function which is called when the module is loaded and initialized.
 /// This can be used by SDKs to setup and/or initialize state,
 /// but no proxy_ functions can be used at that point yet.
 #[no_mangle]
 pub fn _start() {
-
+    log(LogLevel::Info, "[_start] Testing the filter log");
     proxy_wasm::set_log_level(LogLevel::Info);
     proxy_wasm::set_http_context(|context_id, root_context_id| -> Box<dyn HttpContext> {
         Box::new(ActixFilter { context_id, root_context_id })
@@ -38,12 +35,12 @@ impl HttpContext for ActixFilter {
     /// # Return
     /// * i32 (proxy_action_t) next_action
     fn on_http_request_headers(&mut self, _num_headers: usize) -> Action {
-        info!("ActixFilter started. #{}", self.context_id);
+        log(LogLevel::Info, "[on_http_request_headers] Testing the filter log");
+        self.add_http_request_header("x-actix-version", "v1");
 
-
-        let headers = self.get_http_request_headers(&self);
+        // let headers = self.get_http_request_headers(&self);
         // info!("ActixFilter headers. #{}", headers);
-
+        self.resume_http_request();
         Action::Continue
     }
 
@@ -77,6 +74,7 @@ impl HttpContext for ActixFilter {
     fn on_http_response_headers(&mut self, _num_headers: usize) -> Action {
         // let headers = self.get_http_response_headers(&self);
         // todo!()
+        self.add_http_response_header("x-actix-version", "v1");
 
         Action::Continue
     }

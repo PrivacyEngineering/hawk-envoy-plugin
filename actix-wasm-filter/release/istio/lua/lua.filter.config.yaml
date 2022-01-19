@@ -19,9 +19,23 @@ spec:
               -- Called on the request path.
               function envoy_on_request(request_handle)
                 request_handle:logInfo("Hello World.")
+                response_handle:headers():add("x-lua-filter-req", "v2_OK")
+
+                response_handle:logTrace("Request: Testing log for logTrace")
+                response_handle:logDebug("Request: Testing log for logDebug")
+                response_handle:logInfo("Request: Testing log for logInfo")
+                response_handle:logWarn("Request: Testing log for logWarn")
+                response_handle:logErr("Request: Testing log for logErr")
+                response_handle:logCritical("Request: Testing log for logCritical")
               end
               -- Called on the response path.
               function envoy_on_response(response_handle)
-                response_handle:logInfo("Bye Bye.")
-                response_handle:headers():add("x-lua-filter", "OK")
+                response_handle:headers():add("x-lua-filter-res", "v2_OK")
+
+                response_handle:logTrace("Response: Testing log for logTrace")
+                response_handle:logDebug("Response: Testing log for logDebug")
+                response_handle:logInfo("Response: Testing log for logInfo")
+                response_handle:logWarn("Response: Testing log for logWarn")
+                response_handle:logErr("Response: Testing log for logErr")
+                response_handle:logCritical("Response: Testing log for logCritical")
               end

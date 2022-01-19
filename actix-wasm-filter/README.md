@@ -78,21 +78,20 @@ kaf https://raw.githubusercontent.com/istio/istio/release-1.12/samples/httpbin/h
 kaf release/istio/istio.gateway.httpbin.yaml
 ```
 
-5. Run release/istio/ files to install the filter. Istio will install the filter in each envoy proxy
-6. Export variables to access istio ingress
+5. Export variables to access istio ingress
 
 ```shell
 export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
 ```
 
-7. Test the isitio ingress gateway before install the filter. It should get 200 OK
+6. Test the isitio ingress gateway before install the filter. It should get 200 OK
 
 ```shell
 curl -v -s -I "http://$INGRESS_HOST:$INGRESS_PORT/headers"
 ```
 
-8. Install prime filter
+7. Install actix filter
 
 ```shell
 kaf release/istio/filter
