@@ -17,7 +17,7 @@ docker build . -t actixgo-filter
 - Copy extension to host using
 
 ```shell
-docker run -v $PWD/release/:/opt/mount/ --rm --entrypoint cp actixgo-filter /actixgo-filter.wasm /opt/mount/actixgo-filter.wasm 
+docker run -v $PWD/release/:/opt/mount/ --rm --entrypoint cp actixgo-filter /app/actixgo-filter.wasm /opt/mount/actixgo-filter.wasm 
 ```
 
 - Generate checksum for installer
@@ -26,6 +26,15 @@ docker run -v $PWD/release/:/opt/mount/ --rm --entrypoint cp actixgo-filter /act
 sha256sum release/actixgo-filter.wasm
 ```
 
+All together
+
+```shell
+docker build . -t actixgo-filter
+docker run -v $PWD/release/:/opt/mount/ --rm --entrypoint cp actixgo-filter /app/actixgo-filter.wasm /opt/mount/actixgo-filter.wasm 
+sed -i '' -e "s/sha256: .*/sha256: $(sha256sum release/actixgo-filter.wasm | head -c 64)/g" release/istio/filter/actixgo.filter.config.yaml
+kaf release/istio/filter
+
+```
 
 ## Istio example
 
@@ -79,3 +88,13 @@ docker run -it --entrypoint sh actixgo-filter
 ```
 
 The generated file is located in `/` with the name `actixgo-filter.wasm`
+
+- Expose wasm plugin locally using docker nginx
+```shell
+docker run --name some-nginx -p 9090:80 -v $(pwd)/release/:/usr/share/nginx/html:ro -d nginx
+```
+
+- How to check ports in use in linux
+```shell
+lsof -i -P -n | grep LISTEN
+```

@@ -6,6 +6,8 @@ Based on:
 
 - [Extending envoy with WASM and Rust](https://antweiss.com/blog/extending-envoy-with-wasm-and-rust/)
 - [Proxy WASM Rust](https://github.com/otomato-gh/proxy-wasm-rust)
+- [Istio logging with ControlZ](https://istio.io/latest/docs/ops/diagnostic-tools/controlz/)
+- [Envoy administration interface](https://www.envoyproxy.io/docs/envoy/latest/operations/admin)
 
 ## Getting started
 
@@ -118,3 +120,13 @@ docker run -it --entrypoint sh prime-wasm-filter
 ```
 
 The generated file is located in `/target/wasm32-unknown-unknown/release` with the name `primeenvoyfilter.wasm`
+
+- Connect to isto-proxy (envoy proxy) of the pod
+```shell
+kubectl exec --stdin --tty httpbin-74fb669cc6-6bmjl -c istio-proxy -- /bin/bash
+```
+
+- Use envoy administration interface inside of the istio-proxy container
+```shell
+curl localhost:15000/clusters?format=json
+```

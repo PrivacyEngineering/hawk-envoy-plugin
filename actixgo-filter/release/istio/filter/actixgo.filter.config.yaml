@@ -26,8 +26,10 @@ spec:
                     remote:
                       # envoy api for http_uri: https://github.com/envoyproxy/envoy/blob/main/api/envoy/api/v2/core/http_uri.proto
                       http_uri:
-                        uri: https://github.com/jmgoyesc/istio-extensions/blob/main/actixgo-filter.wasm?raw=true
+#                        uri: https://github.com/jmgoyesc/istio-extensions/blob/main/actixgo-filter.wasm?raw=true
+                        uri: http://host.minikube.internal:9090/actixgo-filter.wasm
                         timeout: 10s
                         cluster: jwks_cluster
                       # command `sha256sum`
-                      sha256: b60d7b641abf7af4fdaaad354e2beb17da2025cd1d661619ea14148d9fa74eeb
+#                      sha256: 50cba7793eac4b0236fe2904c3d6848b094a1e0d5e1e9043d3644fdd89996ac3
+                      sha256: 50cba7793eac4b0236fe2904c3d6848b094a1e0d5e1e9043d3644fdd89996ac3

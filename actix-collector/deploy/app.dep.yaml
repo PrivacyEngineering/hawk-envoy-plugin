@@ -2,6 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: actix-collector-deployment
+  labels:
+    app: actix-collector
+    sidecar.istio.io/inject: "false"
+    cluster: actix-collector
 spec:
   selector:
     matchLabels:

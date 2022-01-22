@@ -1,3 +1,7 @@
 FROM tinygo/tinygo:0.21.0
-COPY . .
-RUN tinygo build -o actixgo-filter.wasm -scheduler=none -target=wasi main.go
+WORKDIR /app
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+COPY ./pkg ./pkg
+RUN CGO_ENABLED=0 GOOS=linux tinygo build -o actixgo-filter.wasm -scheduler=none -target=wasi ./pkg
