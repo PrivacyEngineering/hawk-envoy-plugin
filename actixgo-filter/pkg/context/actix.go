@@ -1,6 +1,7 @@
-package main
+package context
 
 import (
+	"github.com/TUB-CNPE-TB/rust-envoy-proxy/actixgo-filter/pkg/parser"
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm"
 )
 
@@ -31,10 +32,10 @@ type Layer struct {
 	ResponseHeaders [][2]string
 }
 
-func (ctx *httpCtx) addLayer(body []byte, headers [][2]string, category Category) {
+func (ctx *HttpCtx) addLayer(body []byte, headers [][2]string, category Category) {
 	proxywasm.LogWarn("GO: calling layer")
 	layer := Layer{}
-	if val, ok := messages[ctx.contextID]; ok {
+	if val, ok := messages[ctx.ContextID]; ok {
 		layer = val
 	}
 
@@ -55,23 +56,24 @@ func (ctx *httpCtx) addLayer(body []byte, headers [][2]string, category Category
 		}
 	}
 
-	messages[ctx.contextID] = layer
+	messages[ctx.ContextID] = layer
 }
 
-func (ctx *httpCtx) submit() {
+func (ctx *HttpCtx) submit() {
 	proxywasm.LogWarn("GO: calling submit")
 
-	val, ok := messages[ctx.contextID]
+	val, ok := messages[ctx.ContextID]
 	if !ok {
-		proxywasm.LogWarnf("GO: No messages from context id %v", ctx.contextID)
+		proxywasm.LogWarnf("GO: No messages from context id %v", ctx.ContextID)
 		return
 	}
-	p := Parser{}
-	data := p.toJson(val)
+
+	data := parser.Transform(val.RequestBody, val.ResponseBody, val.RequestHeaders, val.ResponseHeaders)
 	ctx.callActix(data)
+	delete(messages, ctx.ContextID)
 }
 
-func (ctx *httpCtx) callActix(data []byte) {
+func (ctx *HttpCtx) callActix(data []byte) {
 	proxywasm.LogWarnf("GO: filter in action")
 	_, err := proxywasm.DispatchHttpCall(cluster, actixHeaders, data, trailers, uint32(timeout), callback)
 	if err != nil {

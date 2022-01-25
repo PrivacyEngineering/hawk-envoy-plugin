@@ -31,5 +31,5 @@ spec:
                         timeout: 10s
                         cluster: jwks_cluster
                       # command `sha256sum`
-#                      sha256: 50cba7793eac4b0236fe2904c3d6848b094a1e0d5e1e9043d3644fdd89996ac3
-                      sha256: 50cba7793eac4b0236fe2904c3d6848b094a1e0d5e1e9043d3644fdd89996ac3
+#                      sha256: 29a67066e7df62ddfdffc540ed574b95aad8e06840d1523fde3c14b41ed32a62
+                      sha256: 29a67066e7df62ddfdffc540ed574b95aad8e06840d1523fde3c14b41ed32a62

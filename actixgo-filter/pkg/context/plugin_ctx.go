@@ -1,6 +1,8 @@
-package main
+package context
 
-import "github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
+import (
+	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
+)
 
 type pluginContext struct {
 	// Embed the default plugin context here,
@@ -10,5 +12,5 @@ type pluginContext struct {
 
 // NewHttpContext Override types.DefaultPluginContext.
 func (*pluginContext) NewHttpContext(contextID uint32) types.HttpContext {
-	return &httpCtx{contextID: contextID}
+	return &HttpCtx{ContextID: contextID}
 }
