@@ -3,12 +3,14 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: actixgo-filter-config
-  namespace: istio-system
+#  namespace: istio-system
+  namespace: sock-shop
 spec:
   configPatches:
     - applyTo: EXTENSION_CONFIG
       match:
-        context: GATEWAY
+#        context: GATEWAY
+        context: SIDECAR_OUTBOUND
       patch:
         operation: ADD
         value:
@@ -31,5 +33,5 @@ spec:
                         timeout: 10s
                         cluster: jwks_cluster
                       # command `sha256sum`
-#                      sha256: 29a67066e7df62ddfdffc540ed574b95aad8e06840d1523fde3c14b41ed32a62
-                      sha256: 29a67066e7df62ddfdffc540ed574b95aad8e06840d1523fde3c14b41ed32a62
+#                      sha256: 3679a3f4434f497dd7ebdea249879a685837dce17d8c7d9450e7841494930493
+                      sha256: 3679a3f4434f497dd7ebdea249879a685837dce17d8c7d9450e7841494930493

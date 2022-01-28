@@ -2,12 +2,15 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: actixgo-filter
-  namespace: istio-system
+#  namespace: istio-system
+  namespace: sock-shop
 spec:
   configPatches:
     - applyTo: HTTP_FILTER
       match:
-        context: GATEWAY
+#        context: GATEWAY
+#        context: SIDECAR_INBOUND
+        context: SIDECAR_OUTBOUND
         listener:
           filterChain:
             filter:

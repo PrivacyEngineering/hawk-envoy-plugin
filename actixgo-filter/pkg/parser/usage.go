@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"github.com/TUB-CNPE-TB/rust-envoy-proxy/actixgo-filter/pkg/logger"
 	"github.com/TUB-CNPE-TB/rust-envoy-proxy/actixgo-filter/pkg/parser/body"
-	"github.com/TUB-CNPE-TB/rust-envoy-proxy/actixgo-filter/pkg/parser/headers"
-
 	"strings"
 )
 
@@ -61,13 +59,13 @@ const templateField = `
 
 func Transform(reqBody, resBody []byte, reqHeaders, resHeaders [][2]string) []byte {
 	var fs []Field
-	paths := headers.ParseHeader(reqHeaders)
-	ff := buildFields(paths, "properties", "header")
-	fs = append(fs, ff...)
-
-	paths = headers.ParseHeader(resHeaders)
-	ff = buildFields(paths, "properties", "header")
-	fs = append(fs, ff...)
+	//paths := headers.ParseHeader(reqHeaders)
+	//ff := buildFields(paths, "properties", "header")
+	//fs = append(fs, ff...)
+	//
+	//paths = headers.ParseHeader(resHeaders)
+	//ff = buildFields(paths, "properties", "header")
+	//fs = append(fs, ff...)
 
 	if paths, err := body.ParseBody(reqBody); err == nil {
 		ff := buildFields(paths, "json", "body")
@@ -79,7 +77,7 @@ func Transform(reqBody, resBody []byte, reqHeaders, resHeaders [][2]string) []by
 	}
 
 	fields := buildManyFields(fs)
-	content := buildUsage("REQUEST", fields)
+	content := buildUsage("RESPONSE", fields)
 	last := buildActix(content)
 
 	logger.WriteLog("To be sent. %s", last)
@@ -107,7 +105,7 @@ func buildField(f Field) string {
 	template := strings.Replace(templateField, "{{format}}", f.Format, 1)
 	template = strings.Replace(template, "{{namespace}}", f.Namespace, 1)
 	template = strings.Replace(template, "{{path}}", f.Path, 1)
-	return strings.Replace(template, "{{count}}", string(rune(f.Count)), 1)
+	return strings.Replace(template, "{{count}}", "11", 1)
 }
 
 func buildFields(paths map[string]int, format, ns string) []Field {
