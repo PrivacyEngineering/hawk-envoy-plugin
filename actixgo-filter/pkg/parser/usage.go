@@ -176,11 +176,11 @@ func buildTags() string {
 
 	buff.WriteString(`"cluster_name": "`)
 	buff.Write(getProperty([]string{"cluster_name"}))
-	buff.WriteString(`",`)
-
-	buff.WriteString(`"listener_direction": "`)
-	buff.Write(getProperty([]string{"listener_direction"}))
 	buff.WriteString(`"`)
+
+	//buff.WriteString(`"listener_direction": "`)
+	//buff.Write(getProperty([]string{"listener_direction"}))
+	//buff.WriteString(`"`)
 
 	return buff.String()
 }

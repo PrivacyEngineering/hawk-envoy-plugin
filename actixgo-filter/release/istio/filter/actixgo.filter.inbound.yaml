@@ -3,7 +3,7 @@ kind: EnvoyFilter
 metadata:
   # namespace is important because it is the namespace where the filter will act
   name: actixgo-filter
-  namespace: httpbin-gateway
+  namespace: sock-shop
 spec:
   configPatches:
     - applyTo: HTTP_FILTER
