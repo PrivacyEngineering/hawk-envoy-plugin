@@ -29,6 +29,7 @@ sha256sum release/actixgo-filter.wasm
 All together
 
 ```shell
+k delete -f release/istio/filter
 docker build . -t actixgo-filter
 docker run -v $PWD/release/:/opt/mount/ --rm --entrypoint cp actixgo-filter /app/actixgo-filter.wasm /opt/mount/actixgo-filter.wasm 
 sed -i '' -e "s/sha256: .*/sha256: $(sha256sum release/actixgo-filter.wasm | head -c 64)/g" release/istio/filter/actixgo.filter.config.yaml

@@ -9,7 +9,9 @@ type HttpCtx struct {
 	// Embed the default http context here,
 	// so that we don't need to reimplement all the methods.
 	types.DefaultHttpContext
-	ContextID uint32
+	vmCtxId     uint32
+	pluginCtxId uint32
+	vmConfig    string
 }
 
 // OnHttpRequestBody Override types.DefaultHttpContext.
@@ -42,6 +44,10 @@ func (ctx *HttpCtx) OnHttpRequestHeaders(_ int, _ bool) types.Action {
 		return types.ActionContinue
 	}
 	ctx.addLayer(nil, headers, REQUEST)
+	err = proxywasm.AddHttpRequestHeader("x-actix-go-filter", "processed")
+	if err != nil {
+		proxywasm.LogWarnf("Go-filter: Unable to add custome header x-actix-go-filter: %v", err)
+	}
 	return types.ActionContinue
 }
 

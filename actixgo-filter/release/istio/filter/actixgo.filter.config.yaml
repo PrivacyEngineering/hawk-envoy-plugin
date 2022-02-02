@@ -2,15 +2,15 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
+  # namespace is important because it is the namespace where the filter will act
   name: actixgo-filter-config
-#  namespace: istio-system
-  namespace: sock-shop
+  namespace: httpbin-gateway
 spec:
   configPatches:
     - applyTo: EXTENSION_CONFIG
       match:
 #        context: GATEWAY
-        context: SIDECAR_OUTBOUND
+        context: SIDECAR_INBOUND
       patch:
         operation: ADD
         value:
@@ -23,7 +23,11 @@ spec:
                 # envoy api: https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/base.proto#envoy-v3-api-msg-config-core-v3-remotedatasource
                 vm_config:
                   vm_id: actixgo-filter
+                  allow_precompiled: true
                   runtime: envoy.wasm.runtime.v8
+                  configuration:
+                    "@type": "type.googleapis.com/google.protobuf.StringValue"
+                    value: "outbound|80||collector-go-service.collector-ns.svc.cluster.local"
                   code:
                     remote:
                       # envoy api for http_uri: https://github.com/envoyproxy/envoy/blob/main/api/envoy/api/v2/core/http_uri.proto
@@ -33,5 +37,4 @@ spec:
                         timeout: 10s
                         cluster: jwks_cluster
                       # command `sha256sum`
-#                      sha256: 3679a3f4434f497dd7ebdea249879a685837dce17d8c7d9450e7841494930493
-                      sha256: 3679a3f4434f497dd7ebdea249879a685837dce17d8c7d9450e7841494930493
+                      sha256: 69079f0aeae4f5e9a8a5dee24291445d61d880ab46777e025724e7f197b888be

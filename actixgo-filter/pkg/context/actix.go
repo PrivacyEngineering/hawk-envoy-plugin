@@ -15,11 +15,11 @@ const (
 var (
 	actixHeaders = [][2]string{
 		{":method", "POST"},
-		{":path", "/echo"},
+		{":path", "/"},
 		{":authority", "internal.org.net"},
 		{"Content-Type", "application/json"},
 	}
-	cluster  = "outbound|80||actix-collector-service.httpbin-gateway.svc.cluster.local"
+	//cluster  = "outbound|80||actix-collector-service.httpbin-gateway.svc.cluster.local"
 	timeout  = 1000
 	trailers [][2]string
 	messages = make(map[uint32]Layer)
@@ -33,9 +33,8 @@ type Layer struct {
 }
 
 func (ctx *HttpCtx) addLayer(body []byte, headers [][2]string, category Category) {
-	proxywasm.LogWarn("GO: calling layer")
 	layer := Layer{}
-	if val, ok := messages[ctx.ContextID]; ok {
+	if val, ok := messages[ctx.pluginCtxId]; ok {
 		layer = val
 	}
 
@@ -56,26 +55,24 @@ func (ctx *HttpCtx) addLayer(body []byte, headers [][2]string, category Category
 		}
 	}
 
-	messages[ctx.ContextID] = layer
+	messages[ctx.pluginCtxId] = layer
 }
 
 func (ctx *HttpCtx) submit() {
-	proxywasm.LogWarn("GO: calling submit")
-
-	val, ok := messages[ctx.ContextID]
+	val, ok := messages[ctx.pluginCtxId]
 	if !ok {
-		proxywasm.LogWarnf("GO: No messages from context id %v", ctx.ContextID)
+		proxywasm.LogWarnf("GO: No messages from context id %v", ctx.pluginCtxId)
 		return
 	}
 
 	data := parser.Transform(val.RequestBody, val.ResponseBody, val.RequestHeaders, val.ResponseHeaders)
 	ctx.callActix(data)
-	delete(messages, ctx.ContextID)
+	delete(messages, ctx.pluginCtxId)
 }
 
 func (ctx *HttpCtx) callActix(data []byte) {
-	proxywasm.LogWarnf("GO: filter in action")
-	_, err := proxywasm.DispatchHttpCall(cluster, actixHeaders, data, trailers, uint32(timeout), callback)
+	proxywasm.LogWarnf("GO: filter in action to %s", ctx.vmConfig)
+	_, err := proxywasm.DispatchHttpCall(ctx.vmConfig, actixHeaders, data, trailers, uint32(timeout), callback)
 	if err != nil {
 		proxywasm.LogWarnf("GO-callActix: Unable to perform action: %v", err)
 	}
