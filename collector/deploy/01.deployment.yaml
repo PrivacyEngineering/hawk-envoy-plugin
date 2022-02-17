@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: collector-go-deployment
-  namespace: collector-ns
+  namespace: hawk-ns
 spec:
   selector:
     matchLabels:
