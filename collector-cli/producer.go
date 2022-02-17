@@ -121,34 +121,3 @@ func publish(sessions chan chan session, messages <-chan message) {
 		}
 	}
 }
-
-func consuming(sessions chan chan session, msgs chan amqp.Delivery) {
-	for session := range sessions {
-		var (
-			receiver chan *amqp.Error
-		)
-
-		ch := <-session
-
-		receiver = ch.Channel.NotifyClose(make(chan *amqp.Error, 1))
-		Consumer:
-		for {
-			log.Printf("Consumer in action")
-			body, err := ch.Consume(routingKey, "", true, false, false, false, nil)
-			if err != nil {
-				log.Printf("Unable to consume %s", routingKey)
-				return
-			}
-
-			select {
-			case read := <-body:
-				log.Println("Read message active")
-				msgs <- read
-
-			case <-receiver:
-				log.Println("Notify close active")
-				break Consumer
-			}
-		}
-	}
-}

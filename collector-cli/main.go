@@ -4,41 +4,45 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"strconv"
-	"time"
-
-	"github.com/go-resty/resty/v2"
-	"github.com/streadway/amqp"
+	"os"
 )
 
 var (
 	lines = make(chan message)
-	msgs  = make(chan amqp.Delivery, 1)
 )
 
-const (
-	routingKey  = "queue.collector"
-	dlq         = "queue.collector.dlq"
-	rabbitMqUrl = "amqp://guest:guest@rabbitmq-service:5672/"
+var (
+	routingKey   = get("AMQP_QUEUE", "queue.collector")
+	dlq          = get("AMQP_DLQ", "queue.collector.dlq")
+	rabbitMqUrl  = get("AMQP_CONNECTION", "amqp://guest:guest@localhost:5672/")
+	collectorUrl = get("COLLECTOR_URL", "http://collector.collector-ns/api/usages/batch")
 )
+
+func get(key string, def string) string {
+	if val, has := os.LookupEnv(key); has {
+		return val
+	} else {
+		log.Printf("No env variable %s found. Using default connection: %s", key, def)
+		return def
+	}
+}
 
 func main() {
-	ctx, _ := context.WithCancel(context.Background())
+	ctx, done := context.WithCancel(context.Background())
 	go func() {
 		publish(redial(ctx, rabbitMqUrl), lines)
 	}()
 
-	go func() {
-		consuming(redial(ctx, rabbitMqUrl), msgs)
-	}()
+	cli, err := NewClient()
+	failOnError(err, "New rabbitmq client failed")
 
-	log.Printf("Ready to consume messages")
-	for {
-		select {
-		case d := <- msgs:
-			propagate(d.Body)
-		}
+	select {}
+	log.Printf("shutting down")
+
+	if err := cli.Shutdown(); err != nil {
+		log.Fatalf("error during shutdown: %s", err)
 	}
+	done()
 }
 
 func propagate(data []byte) {
@@ -51,50 +55,9 @@ func propagate(data []byte) {
 	}
 
 	for _, usage := range usages {
-		metadata,ok := usage["metadata"].(map[string]interface{})
-		if !ok {
-			log.Printf("Unable to transform metadata to map: %s", err)
-			toDlq(data)
-			return
-		}
-		unixTS,ok := metadata["timestamp"].(string)
-		if !ok {
-			log.Printf("Unable to transform metadata.timestamp to string. Metadata: %v, Error: %s", metadata, err)
-			toDlq(data)
-			return
-		}
-
-		i, err := strconv.ParseFloat(unixTS, 64)
-		if err != nil {
-			log.Printf("Unable to transform unix timestamp: %s", err)
-			toDlq(data)
-			return
-		}
-		i = i / 1e9
-
-		tm := time.Unix(int64(i), 0).Format(time.RFC3339)
-
-		metadata["timestamp"] = tm
-		log.Printf("Timestamp converted: %s", tm)
+		fix(data, usage)
 	}
-
-	parsed,err := json.Marshal(usages)
-	if err != nil {
-		log.Printf("Unable to marshall json: %s", err)
-		toDlq(data)
-		return;
-	}
-
-	client := resty.New()
-	resp, err := client.R().
-		SetHeader("Content-Type", "application/json").
-		SetBody(parsed).
-		Post("http://collector.collector-ns/api/usages/batch")
-
-	if err != nil || resp.StatusCode() != 200 {
-		log.Printf("Back to dlq for [%d, %s]", resp.StatusCode(), err)
-		toDlq(parsed)
-	}
+	send(data, usages)
 }
 
 func toDlq(data []byte) {
