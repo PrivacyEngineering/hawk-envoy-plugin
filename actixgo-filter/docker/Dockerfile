@@ -1,4 +1,4 @@
-FROM tinygo/tinygo:0.22.0
+FROM tinygo/tinygo:0.28.0
 WORKDIR /app
 COPY go.mod .
 COPY go.sum .

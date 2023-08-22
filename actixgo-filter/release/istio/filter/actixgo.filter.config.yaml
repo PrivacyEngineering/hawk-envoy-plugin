@@ -4,7 +4,7 @@ kind: EnvoyFilter
 metadata:
   # namespace is important because it is the namespace where the filter will act
   name: actixgo-filter-config
-  namespace: sock-shop
+  namespace: httpbin-gateway
 spec:
   configPatches:
     - applyTo: EXTENSION_CONFIG
@@ -33,8 +33,9 @@ spec:
                       # envoy api for http_uri: https://github.com/envoyproxy/envoy/blob/main/api/envoy/api/v2/core/http_uri.proto
                       http_uri:
                         uri: https://github.com/jmgoyesc/istio-extensions/blob/main/actixgo-filter.wasm?raw=true
-#                        uri: http://host.minikube.internal:9090/actixgo-filter.wasm
+#                        uri: http://nginx-serve-filter-service.nginx-serve-filter.svc/actixgo-filter.wasm
                         timeout: 10s
                         cluster: jwks_cluster
                       # command `sha256sum`
+#                      sha256: 5c52cd8b899e36f938d71474a9de230d1fde68949d63d88fe905640d319b4c1b
                       sha256: d0b468938af078e0d2c347483ed03d049b93167bcb5e0d7a0416229a26f07139
