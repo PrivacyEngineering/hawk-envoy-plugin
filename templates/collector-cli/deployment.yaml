@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "collector-cli.fullname" . }}
+  labels:
+    {{- include "collector-cli.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.collectorCli.autoscaling.enabled }}
+  replicas: {{ .Values.collectorCli.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "collector-cli.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "collector-cli.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "hawk-envoy-plugin.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.collectorCli.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "collector-cli.name" . }}
+          securityContext:
+            {{- toYaml .Values.collectorCli.securityContext | nindent 12 }}
+          image: "{{ .Values.collectorCli.image.repository }}:{{ .Values.collectorCli.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.collectorCli.image.pullPolicy }}
+          env:
+            # TODO: use secret from rabbitmq helm chart
+            - name: AMQP_CONNECTION
+              value: "amqp://{{ .Values.rabbitmq.auth.username }}:{{ .Values.rabbitmq.auth.password }}@{{ .Release.Name }}-rabbitmq:{{ .Values.rabbitmq.service.ports.amqp }}/"
+            - name: AMQP_QUEUE
+              value: "queue.collector"
+            - name: AMQP_DLQ
+              value: "queue.collector.dlq"
+            - name: COLLECTOR_URL
+              value: "{{ .Values.hawkEnvoyPlugin.hawkServiceApiUrl }}/usages/batch"
+          resources:
+            {{- toYaml .Values.collectorCli.resources | nindent 12 }}
+      {{- with .Values.collectorCli.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.collectorCli.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.collectorCli.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

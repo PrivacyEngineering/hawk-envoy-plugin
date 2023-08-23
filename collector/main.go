@@ -6,12 +6,23 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
-const (
-	routingKey  = "queue.collector"
-	rabbitMqUrl = "amqp://guest:guest@rabbitmq-service:5672/"
+
+var (
+	routingKey   = get("AMQP_QUEUE", "queue.collector")
+	rabbitMqUrl  = get("AMQP_CONNECTION", "amqp://guest:guest@rabbitmq-service:5672/")
 )
+
+func get(key string, def string) string {
+	if val, has := os.LookupEnv(key); has {
+		return val
+	} else {
+		log.Printf("No env variable %s found. Using default connection: %s", key, def)
+		return def
+	}
+}
 
 var (
 	lines = make(chan message)
