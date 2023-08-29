@@ -71,7 +71,7 @@ collectorCli:
   replicaCount: 1
 
   image:
-    repository: jmgoyesc/collector-cli-go
+    repository: ghcr.io/privacyengineering/collector-cli-go
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
