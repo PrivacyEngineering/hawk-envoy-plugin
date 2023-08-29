@@ -7,16 +7,51 @@
 
 Extension for istio envoy to allow trace personal data between rest microservices in kubernetes
 
-## Projects
+![Diagram](./src/diagram.png)
 
-### actixgo-filter
+## Helm Chart
 
-Filter in envoy proxy
+This helm chart is used to deploy the envoy filter in a target kubernetes-namespace.
 
-### collector
+## TL;DR
 
-HTTP -> rabbitmq
+Create target namespace (e.g sock-shop), where your application will run.
 
-### collector-cli
+```console
+kubectl create namespace sock-shop
+```
 
-rabbitmq -> hawk-service
+Install `hawk-envoy-plugin` in `hawk-ep` namespace
+
+```console
+helm install hawk-ep . --namespace hawk-ep --create-namespace
+```
+
+
+## Prerequisites
+
+- Kubernetes 1.16+
+- Helm 3.0+
+- Istio 1.6+
+- [Hawk](https://github.com/PrivacyEngineering/hawk)
+
+## Parameters
+
+### Hawk-envoy-plugin parameters
+
+| Name                                | Description                                                        | Value                                            |
+| ----------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------ |
+| `hawkEnvoyPlugin.namespace`         | The target namespace to collect tracing data from                  | `"sockshop"`                                     |
+| `hawkEnvoyPlugin.hawkServiceApiUrl` | Hawk Service Api Url in url-schema                                 | `http://hawk-service.hawk.svc.cluster.local/api` |
+| `hawkEnvoyPlugin.httpbin`           | Whether a httpbin-namespace should be created for testing purposes | `true`                                           |
+
+
+
+## Testing hawk-envoy-plugin
+
+To test the plugin, the helm-chart uses the httpbin-namespace, which is created by the helm chart.
+
+**Note:** The httpbin-namespace is only created if the `hawkEnvoyPlugin.httpbin` parameter is set to `true`.
+```console
+helm test -n hawk-ep hawk-ep --logs
+```
