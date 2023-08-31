@@ -1,0 +1,36 @@
+name: Commit to Helm Charts Repository
+
+env:
+  CHART_NAME: "hawk-envoy-plugin"
+
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  push-to-repo:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v2
+
+    - name: Commit and push to another repository
+      run: |
+        mkdir -p hawk-helm-charts/${{ env.CHART_NAME }}
+        cp -r README.md values.yaml Chart.yaml Chart.lock templates .helmignore "hawk-helm-charts/${{ env.CHART_NAME }}"
+
+    - name: Pushes to public repository
+      id: push_directory
+      uses: cpina/github-action-push-to-another-repository@ssh-deploy-key
+      env:
+        SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+      with:
+        source-directory: hawk-helm-charts/${{ env.CHART_NAME }}
+        destination-github-username: 'PrivacyEngineering'
+        destination-repository-name: 'hawk-helm-charts'
+        user-email: $GITHUB_ACTOR@users.noreply.github.com
+        commit-message: pushed from $GITHUB_REF
+        target-directory: charts/${{ env.CHART_NAME }}
+        target-branch: master
