@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-08-29T12:50:30.602Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="KGoRDtFats7AKIUuAt-D" version="21.6.9" type="browser">
+<mxfile host="app.diagrams.net" modified="2023-09-06T15:02:14.922Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="2RKaCMDaQZQuHwfP0gud" version="21.6.9" type="device">
   <diagram name="Seite-1" id="8kuXxvjcDy6w4I1sC6yL">
-    <mxGraphModel dx="2440" dy="1256" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1412" dy="707" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -22,7 +22,7 @@
         <mxCell id="FWUvMrQkgFRxplU0hNNj-7" value="&lt;h1 style=&quot;border-color: var(--border-color);&quot;&gt;&lt;font style=&quot;border-color: var(--border-color);&quot; color=&quot;#660066&quot;&gt;rabbitmq&lt;/font&gt;&lt;/h1&gt;" style="rhombus;whiteSpace=wrap;html=1;strokeWidth=2;fillWeight=4;hachureGap=8;fillStyle=cross-hatch;fillColor=#d5e8d4;sketch=1;strokeColor=#82b366;rounded=1;hachureAngle=45;shadow=0;glass=0;" parent="1" vertex="1">
           <mxGeometry x="400" y="140" width="180" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="FWUvMrQkgFRxplU0hNNj-8" value="&lt;h1&gt;&lt;font color=&quot;#660066&quot;&gt;collector-cli&lt;/font&gt;&lt;/h1&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillWeight=4;hachureGap=8;hachureAngle=45;fillColor=#f8cecc;sketch=1;shadow=0;glass=0;strokeColor=#b85450;" parent="1" vertex="1">
+        <mxCell id="FWUvMrQkgFRxplU0hNNj-8" value="&lt;h1&gt;&lt;font color=&quot;#660066&quot;&gt;consumer&lt;/font&gt;&lt;/h1&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillWeight=4;hachureGap=8;hachureAngle=45;fillColor=#f8cecc;sketch=1;shadow=0;glass=0;strokeColor=#b85450;" parent="1" vertex="1">
           <mxGeometry x="350" y="270" width="280" height="60" as="geometry" />
         </mxCell>
         <mxCell id="FWUvMrQkgFRxplU0hNNj-9" value="&lt;h1&gt;&lt;font color=&quot;#660066&quot;&gt;Hawk-Service&lt;/font&gt;&lt;/h1&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillWeight=4;hachureGap=8;hachureAngle=45;fillColor=#dae8fc;sketch=1;shadow=0;glass=0;strokeColor=#6c8ebf;" parent="1" vertex="1">

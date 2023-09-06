@@ -7,7 +7,7 @@
 
 Extension for istio envoy to allow trace personal data between rest microservices in kubernetes
 
-![Diagram](./src/diagram.png)
+![Diagram](./images/diagram.drawio.svg)
 
 ## Helm Chart
 

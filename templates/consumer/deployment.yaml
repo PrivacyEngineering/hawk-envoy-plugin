@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "collector-cli.fullname" . }}
+  name: {{ include "consumer.fullname" . }}
   labels:
-    {{- include "collector-cli.labels" . | nindent 4 }}
+    {{- include "consumer.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.collectorCli.autoscaling.enabled }}
-  replicas: {{ .Values.collectorCli.replicaCount }}
+  {{- if not .Values.consumer.autoscaling.enabled }}
+  replicas: {{ .Values.consumer.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "collector-cli.selectorLabels" . | nindent 6 }}
+      {{- include "consumer.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "collector-cli.selectorLabels" . | nindent 8 }}
+        {{- include "consumer.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -26,13 +26,13 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "hawk-envoy-plugin.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.collectorCli.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.consumer.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ include "collector-cli.name" . }}
+        - name: {{ include "consumer.name" . }}
           securityContext:
-            {{- toYaml .Values.collectorCli.securityContext | nindent 12 }}
-          image: "{{ .Values.collectorCli.image.repository }}:{{ .Values.collectorCli.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.collectorCli.image.pullPolicy }}
+            {{- toYaml .Values.consumer.securityContext | nindent 12 }}
+          image: "{{ .Values.consumer.image.repository }}:{{ .Values.consumer.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.consumer.image.pullPolicy }}
           env:
             # TODO: use secret from rabbitmq helm chart
             - name: AMQP_CONNECTION
@@ -44,16 +44,16 @@ spec:
             - name: COLLECTOR_URL
               value: "{{ .Values.hawkEnvoyPlugin.hawkServiceApiUrl }}/usages/batch"
           resources:
-            {{- toYaml .Values.collectorCli.resources | nindent 12 }}
-      {{- with .Values.collectorCli.nodeSelector }}
+            {{- toYaml .Values.consumer.resources | nindent 12 }}
+      {{- with .Values.consumer.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.collectorCli.affinity }}
+      {{- with .Values.consumer.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.collectorCli.tolerations }}
+      {{- with .Values.consumer.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

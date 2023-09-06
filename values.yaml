@@ -66,12 +66,12 @@ collector:
   affinity: {}
 
 
-# values for collector-cli-go
-collectorCli:
+# values for consumer
+consumer:
   replicaCount: 1
 
   image:
-    repository: ghcr.io/privacyengineering/collector-cli-go
+    repository: ghcr.io/privacyengineering/consumer
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
