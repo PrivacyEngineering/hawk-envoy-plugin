@@ -13,20 +13,41 @@ Extension for istio envoy to allow trace personal data between rest microservice
 
 This helm chart is used to deploy the envoy filter in a target kubernetes-namespace.
 
-## TL;DR
 
-Create target namespace (e.g sock-shop), where your application will run.
+### Deployment through Helm
 
-```console
-kubectl create namespace sock-shop
-```
 
-Install `hawk-envoy-plugin` in `hawk-ep` namespace
-
-```console
-helm install hawk-ep . --namespace hawk-ep --create-namespace
-```
-
+1. Add the helm chart repository (if not already done):
+    ```
+    helm repo add hawk https://privacyengineering.github.io/hawk-helm-charts/
+    ```
+2. Install the istio service mesh using `istioctl` with the demo profile:
+    ```
+    istioctl install --set profile=default -y
+    ```
+3. Create the namespace where hawk is intended to be applied:
+    ```
+    kubectl create namespace sock-shop
+    ```
+4. Create `values.yaml` and modify to your needs (see default values in [`values.yaml`](values.yaml) and the documentation for [Parameters](#parameters)):
+    ```
+    cat <<EOF > values.yaml
+    # example values.yaml
+    hawkEnvoyPlugin:
+      namespace: sock-shop
+      hawkServiceApiUrl: http://hawk-service.hawk.svc.cluster.local/api
+      httpbin: true
+    EOF
+    ```
+5. Install hawk envoy plugin and all it's services:
+    ```
+    helm dependency update
+    helm install -f values.yaml sock-shop-hawk-ep hawk/hawk-envoy-plugin --namespace hawk-envoy-plugin --create-namespace
+    ```
+6. Install the rest of the demo architecture:
+    ```
+    kubectl apply -f ./02.sock-shop/
+    ```
 
 ## Prerequisites
 
@@ -41,7 +62,7 @@ helm install hawk-ep . --namespace hawk-ep --create-namespace
 
 | Name                                | Description                                                        | Value                                            |
 | ----------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------ |
-| `hawkEnvoyPlugin.namespace`         | The target namespace to collect tracing data from                  | `"sockshop"`                                     |
+| `hawkEnvoyPlugin.namespace`         | The target namespace to collect tracing data from                  | `"sock-shop"`                                     |
 | `hawkEnvoyPlugin.hawkServiceApiUrl` | Hawk Service Api Url in url-schema                                 | `http://hawk-service.hawk.svc.cluster.local/api` |
 | `hawkEnvoyPlugin.httpbin`           | Whether a httpbin-namespace should be created for testing purposes | `true`                                           |
 
@@ -53,5 +74,5 @@ To test the plugin, the helm-chart uses the httpbin-namespace, which is created 
 
 **Note:** The httpbin-namespace is only created if the `hawkEnvoyPlugin.httpbin` parameter is set to `true`.
 ```console
-helm test -n hawk-ep hawk-ep --logs
+helm test -n hawk-envoy-plugin sock-shop-hawk-ep --logs
 ```
