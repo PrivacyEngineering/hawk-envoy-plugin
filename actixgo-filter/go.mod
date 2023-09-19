@@ -1,4 +1,4 @@
-module github.com/TUB-CNPE-TB/rust-envoy-proxy/actixgo-filter
+module github.com/PrivacyEngineering/hawk-envoy-plugin/actixgo-filter
 
 go 1.17
 

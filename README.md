@@ -1,37 +1,78 @@
-# rust-envoy-proxy
+# hawk-envoy-proxy
 
 [![Apache 2.0 License][license-badge]][license-link]
 
 [license-badge]: https://img.shields.io/github/license/proxy-wasm/proxy-wasm-rust-sdk
-[license-link]: https://github.com/TUB-CNPE-TB/rust-envoy-proxy/blob/master/LICENSE
+[license-link]: https://github.com/PrivacyEngineering/hawk-envoy-plugin/blob/master/LICENSE
 
 Extension for istio envoy to allow trace personal data between rest microservices in kubernetes
 
-## Projects
+![Diagram](./images/diagram.drawio.svg)
 
-### [prime-wasm-filter](./prime-wasm-filter)
+## Helm Chart
 
-Sample project to use a prime factor filter to authorize the flow.
-It uses rust to generate a wasm32 using docker, and then install the extension in
-envoy proxy. Test evverything using docker compose
+This helm chart is used to deploy the envoy filter in a target kubernetes-namespace.
 
-### [actix-wasm-filter](./actix-wasm-filter)
 
-Istio/envoy extension using WASM to intercept request and response traffic for services using istio ingress
+### Deployment through Helm
 
-## Rust programming language documentation
 
-- [Rust - The Book](https://doc.rust-lang.org/book/)
-- [Rust by example](https://doc.rust-lang.org/stable/rust-by-example/)
-- [REST api framework for rust](https://actix.rs/docs/)
+1. Add the helm chart repository (if not already done):
+    ```
+    helm repo add hawk https://privacyengineering.github.io/hawk-helm-charts/
+    ```
+2. Install the istio service mesh using `istioctl` with the demo profile:
+    ```
+    istioctl install --set profile=default -y
+    ```
+3. Create the namespace where hawk is intended to be applied:
+    ```
+    kubectl create namespace sock-shop
+    ```
+4. Create `values.yaml` and modify to your needs (see default values in [`values.yaml`](values.yaml) and the documentation for [Parameters](#parameters)):
+    ```
+    cat <<EOF > values.yaml
+    # example values.yaml
+    hawkEnvoyPlugin:
+      namespace: sock-shop
+      hawkServiceApiUrl: http://hawk-service.hawk.svc.cluster.local/api
+      httpbin: true
+    EOF
+    ```
+5. Install hawk envoy plugin and all it's services:
+    ```
+    helm dependency update
+    helm install -f values.yaml sock-shop-hawk-ep hawk/hawk-envoy-plugin --namespace hawk-envoy-plugin --create-namespace
+    ```
+6. Install the rest of the demo architecture:
+    ```
+    kubectl apply -f ./02.sock-shop/
+    ```
 
-Blogs
+## Prerequisites
 
-- [Extending envoy with wasm and rust](https://antweiss.com/blog/extending-envoy-with-wasm-and-rust/)
-- [Istio wasm plugin configuration](https://istio.io/latest/docs/reference/config/proxy_extensions/wasm-plugin/)
-- [Istio: Distributing WebAssembly Modules](https://istio.io/latest/docs/ops/configuration/extensibility/wasm-module-distribution/)
+- Kubernetes 1.16+
+- Helm 3.0+
+- Istio 1.6+
+- [Hawk](https://github.com/PrivacyEngineering/hawk)
 
-## Videos
+## Parameters
 
-- [WebAssembly Extension and envoy architecture](https://www.youtube.com/watch?v=XdWmm_mtVXI)
-- [WebAssembly extension for proxies](https://www.youtube.com/watch?v=OIUPf8m7CGA)
+### Hawk-envoy-plugin parameters
+
+| Name                                | Description                                                        | Value                                            |
+| ----------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------ |
+| `hawkEnvoyPlugin.namespace`         | The target namespace to collect tracing data from                  | `"sock-shop"`                                     |
+| `hawkEnvoyPlugin.hawkServiceApiUrl` | Hawk Service Api Url in url-schema                                 | `http://hawk-service.hawk.svc.cluster.local/api` |
+| `hawkEnvoyPlugin.httpbin`           | Whether a httpbin-namespace should be created for testing purposes | `true`                                           |
+
+
+
+## Testing hawk-envoy-plugin
+
+To test the plugin, the helm-chart uses the httpbin-namespace, which is created by the helm chart.
+
+**Note:** The httpbin-namespace is only created if the `hawkEnvoyPlugin.httpbin` parameter is set to `true`.
+```console
+helm test -n hawk-envoy-plugin sock-shop-hawk-ep --logs
+```
